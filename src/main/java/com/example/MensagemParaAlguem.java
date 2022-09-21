@@ -1,6 +1,6 @@
 package com.example;
 
-public abstract class MensagemParaAlguem extends Mensagem {
+public class MensagemParaAlguem extends Mensagem {
 
     private String emailDestinatario;
 

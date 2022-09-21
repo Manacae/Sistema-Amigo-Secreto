@@ -31,6 +31,6 @@ public abstract class Mensagem {
         return anonima;
     }
 
-    public abstract String getTextoCompletoAReceber();
+    public abstract String getTextoCompletoAExibir();
 }
 

@@ -1,3 +1,5 @@
+package com.example;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -5,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
 
+import com.example.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +21,7 @@ public class SistemaAmigoTest {
     }
 
     @Test
-    void testSistemaAmigo() {
+    void testaSistemaAmigo() {
         assertTrue(sistema.pesquisaTodasAsMensagens().isEmpty());
         assertThrows(AmigoInexistenteException.class,
                 ()-> sistema.pesquisaAmigo("ayla@teste.com"));

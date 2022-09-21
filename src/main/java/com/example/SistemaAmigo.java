@@ -6,6 +6,19 @@ import java.util.LinkedList;
 public class SistemaAmigo {
     private List<Mensagem> mensagens;
     private List<Amigo> amigos;
+    private int maxMensagens;
+    private static final int DEFAULT_MAX_MENSAGENS = 50;
+
+
+    public SistemaAmigo() {
+        this(DEFAULT_MAX_MENSAGENS);
+    }
+
+    public SistemaAmigo(int mensagensMaximas) {
+        this.mensagens = new LinkedList<>();
+        this.amigos = new LinkedList<>();
+        this.maxMensagens = mensagensMaximas;
+    }
 
     public void cadastraAmigo(String nomeAmigo, String emailAmigo) throws AmigoJaExisteException{
         for(Amigo grupo: this.amigos){
@@ -18,7 +31,7 @@ public class SistemaAmigo {
         this.amigos.add(amigoNovo);
     }
 
-    public Amigo pesquisaAmigo(String emailAmigo) throws AmigoInexisteException {
+    public Amigo pesquisaAmigo(String emailAmigo) throws AmigoInexistenteException {
         for(Amigo grupo: this.amigos){
             if (grupo.getEmail().equals(emailAmigo)){
                 return grupo;
@@ -36,7 +49,7 @@ public class SistemaAmigo {
         return amigos;
     } 
 
-    public List<Mensagem> presquisaMensagensAnonimas(){
+    public List<Mensagem> pesquisaMensagensAnonimas(){
         
         List<Mensagem> listaMensagens = new LinkedList<>();
         
@@ -50,26 +63,73 @@ public class SistemaAmigo {
         return listaMensagens;
     }
 
-    public void enviarMensagemParaAlguem(String texto, String remetente, boolean ehAnonima){
+    // String mensagem = "olá mundo"
+    //  String emailRem = "ex@..."
+    // String emailDest = "ex@..."
+    // SistemaAmigo.enviarMensagem(mensagem, emailRem, emailDest, true)
 
+    public void enviarMensagemParaAlguem(String texto, String emailRemetente, String emailDestinatario, boolean ehAnonima){
+        
+        MensagemParaAlguem msg =  new MensagemParaAlguem(texto, emailRemetente, emailDestinatario, ehAnonima);
+        this.mensagens.add(msg);
     }
 
-    public void enviarMensagemParaTodos(String texto, String remetente, String destinatario, boolean ehAnonima){
+    public void enviarMensagemParaTodos(String texto, String emailRemetente, boolean ehAnonima){
 
+        MensagemParaTodos msg = new MensagemParaTodos (texto, emailRemetente, ehAnonima);
+        this.mensagens.add(msg);
     }
 
-    public String pesquisaAmigoSecretoDe(String emailDaPessoa) throws AmigoInexistenteException, AmigoNaoSorteadoException(){
-        return null;
-
-        //throw new AmigoNaoSorteadoException(), throw new AmigoInexistenteException();
-    }
 
     public void configuraAmigoSecretoDe(String emailDaPessoa, String emailAmigoSorteado) throws AmigoInexistenteException {
 
-        //throw new AmigoInexistenteException();
+        for (Amigo grupo: this.amigos){
+            
+            if (grupo.getEmail().equals(emailDaPessoa)){
+                grupo.setEmailAmigoSorteado(emailAmigoSorteado);
+                return; 
+            }
+
+        }
+        
+        throw new AmigoInexistenteException ("Não foi localizado o email: "+emailDaPessoa);
+
     }
 
+    public String pesquisaAmigoSecretoDe(String emailDaPessoa) throws AmigoInexistenteException, AmigoNaoSorteadoException{
+        
+        for(Amigo grupo: this.amigos){
 
+            if(grupo.getEmail().equals(emailDaPessoa)){
+
+                String emailAmigoSorteado = grupo.getEmailAmigoSorteado();
+
+                if(emailAmigoSorteado == null){
+                    throw new AmigoNaoSorteadoException ("Ainda não foi sorteado o amigo secreto da pessoa com o email: "+emailDaPessoa);
+                }else{
+                    return emailAmigoSorteado;
+                }
+            }
+        }
+        
+        throw new AmigoInexistenteException ("Não foi encontrada nenhuma pessoa com o email: "+emailDaPessoa);
+
+    }
+    
+    public void sortear() throws AmigoInexistenteException{
+        List<Amigo> sorteioAmigo = new LinkedList<>();
+        List<Amigo> lista = pesquisaTodosOsAmigos();
+
+        for(Amigo grupo: this.amigos){
+            if(grupo.getEmailAmigoSorteado() == null){
+                int posicaoDaListaSorteada = (int)(Math.random()*lista.size());
+                configuraAmigoSecretoDe(grupo.getEmail(), lista.get(posicaoDaListaSorteada).getEmail());
+                sorteioAmigo.add(grupo);
+                lista.remove(grupo);
+            }
+        }
+   
+    }
 }   
     
 
